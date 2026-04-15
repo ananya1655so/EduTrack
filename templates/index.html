@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="robots" content="noindex">
+<title>EduTrack – SRMAP</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #f0ede8;
+    --indigo: #fffaf7;
+    --accent: #8b7cf8;
+    --gold: #f4a261;
+    --mint: #52b788;
+    --rose: #e07a8f;
+    --white: #2d2d2d;
+    --muted: #9a8fa0;
+    --card: rgba(255,255,255,0.7);
+    --border: rgba(139,124,248,0.15);
+    --panel-bg: #faf7f4;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(139,124,248,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,124,248,0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridScroll 20s linear infinite;
+  }
+  @keyframes gridScroll { to { background-position: 40px 40px; } }
+
+  .orb {
+    position: fixed; border-radius: 50%; filter: blur(90px); z-index: 0; pointer-events: none;
+    animation: float 8s ease-in-out infinite alternate;
+  }
+  .orb-1 { width:400px; height:400px; background:rgba(139,124,248,0.18); top:-100px; left:-100px; }
+  .orb-2 { width:350px; height:350px; background:rgba(82,183,136,0.15); bottom:-80px; right:-80px; animation-delay:-4s; }
+  .orb-3 { width:200px; height:200px; background:rgba(240,162,97,0.12); top:50%; left:60%; animation-delay:-2s; }
+  @keyframes float { from{transform:translate(0,0) scale(1)} to{transform:translate(30px,30px) scale(1.08)} }
+
+  .page { position:relative; z-index:1; min-height:100vh; display:flex; }
+
+  .hero {
+    flex: 1.2;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 60px 70px;
+    border-right: 1px solid rgba(139,124,248,0.2);
+  }
+  .logo-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(139,124,248,0.12);
+    border: 1px solid rgba(139,124,248,0.25);
+    padding: 8px 16px; border-radius: 100px;
+    font-size: 13px; color: var(--accent);
+    font-family: 'Syne', sans-serif; letter-spacing: 0.05em;
+    margin-bottom: 40px; width: fit-content;
+  }
+  .logo-badge::before { content: '◆'; font-size: 10px; }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 800; line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--mint));
+    background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+  }
+  .hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.7; max-width: 400px; margin-bottom: 48px; }
+
+  .feature-list { display: flex; flex-direction: column; gap: 16px; }
+  .feature-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .feature-item:hover { border-color: rgba(79,142,247,0.4); transform: translateX(4px); }
+  .fi-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .fi-icon.blue { background: rgba(79,142,247,0.2); }
+  .fi-icon.mint { background: rgba(61,255,197,0.2); }
+  .fi-icon.gold { background: rgba(245,200,66,0.2); }
+  .fi-icon.rose { background: rgba(255,100,100,0.2); }
+  .fi-text strong { display:block; font-size:14px; font-family:'Syne',sans-serif; margin-bottom:2px; }
+  .fi-text span { font-size:12px; color:var(--muted); }
+
+  .form-panel {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 60px 50px;
+  }
+  .auth-card {
+    width: 100%; max-width: 420px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid rgba(139,124,248,0.2);
+    border-radius: 20px;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 40px rgba(139,124,248,0.1);
+  }
+  .tab-switcher {
+    display: flex; background: rgba(139,124,248,0.08);
+    border-radius: 10px; padding: 4px;
+    margin-bottom: 32px;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px;
+    border: none; background: transparent;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; cursor: pointer; border-radius: 8px; transition: all 0.25s;
+    transition: all 0.25s;
+  }
+  .tab-btn.active {
+    background: var(--accent); color: #fff; font-weight: 500;
+  }
+
+  .auth-title {
+    font-family: 'Syne', sans-serif; font-size: 1.4rem;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .auth-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+  .form-group input, .form-group select {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #2d2d2d;
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.25s, box-shadow 0.25s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-group select option { background: #fffaf7; color: #2d2d2d; }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(139,124,248,0.2);
+  }
+  .form-row { display: flex; gap: 12px; }
+  .form-row .form-group { flex: 1; }
+
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border: none; border-radius: 12px;
+    color: #fff; font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(139,124,248,0.3); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .divider { display:flex; align-items:center; gap:12px; margin:20px 0; color:var(--muted); font-size:12px; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .demo-accounts {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .demo-btn {
+    width:100%; padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 8px;
+    color: #2d2d2d; font-family:'DM Sans',sans-serif; font-size:13px;
+    cursor:pointer; text-align:left; display:flex; justify-content:space-between;
+    align-items:center; transition:all 0.2s;
+  }
+  .demo-btn:hover { border-color:rgba(79,142,247,0.4); background:rgba(79,142,247,0.08); }
+  .demo-badge {
+    font-size:11px; padding:2px 8px; border-radius:20px;
+    font-family:'Syne',sans-serif; font-weight:600;
+  }
+  .badge-admin { background:rgba(245,200,66,0.2); color:var(--gold); }
+  .badge-teacher { background:rgba(61,255,197,0.2); color:var(--mint); }
+  .badge-student { background:rgba(79,142,247,0.2); color:var(--accent); }
+
+  .error-msg {
+    background: rgba(255,100,100,0.15); border:1px solid rgba(255,100,100,0.3);
+    border-radius: 8px; padding:10px 14px; font-size:13px; color:#ff9999;
+    margin-top: 12px; display:none;
+  }
+
+  .form-section { display:none; }
+  .form-section.active { display:block; }
+
+  @media (max-width:768px) {
+    .hero { display:none; }
+    .form-panel { padding:30px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="page">
+ 
+  <div class="hero">
+    <div class="logo-badge">SRM AP · Smart Campus Platform</div>
+    <h1>Smart Curriculum<br><span>Activity &amp; Attendance</span><br>Platform</h1>
+    <p>Automate attendance tracking, personalize student productivity, and align daily routines with long-term academic goals.</p>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="fi-icon blue">📊</div>
+        <div class="fi-text">
+          <strong>Smart Attendance Tracking</strong>
+          <span>QR code, Bluetooth proximity, or face recognition based marking</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon mint">🎯</div>
+        <div class="fi-text">
+          <strong>AI Task Suggestions</strong>
+          <span>Personalized tasks during free periods based on career goals</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon gold">📅</div>
+        <div class="fi-text">
+          <strong>Dynamic Timetable</strong>
+          <span>Live class schedule with real-time attendance display</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon rose">📈</div>
+        <div class="fi-text">
+          <strong>Analytics & Alerts</strong>
+          <span>Attendance trends, low-attendance warnings, CSV export</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  <div class="form-panel">
+    <div class="auth-card">
+      <div class="tab-switcher">
+        <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+        <button class="tab-btn" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <div id="login-section" class="form-section active">
+        <div class="auth-title">Welcome Back</div>
+        <div class="auth-sub">Sign in to your account</div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" placeholder="you@institution.edu">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+        <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+        <div class="error-msg" id="login-error"></div>
+
+        <div class="divider">Quick Demo Access</div>
+        <div class="demo-accounts">
+          <button class="demo-btn" data-email="admin" data-domain="srmap.edu" data-pass="kimi123" onclick="fillDemoFromAttr(this)">
+            admin [at] srmap.edu <span class="demo-badge badge-admin">Admin · kimi123</span>
+          </button>
+          <button class="demo-btn" data-email="priya.sharma" data-domain="srmap.edu" data-pass="max123" onclick="fillDemoFromAttr(this)">
+            priya.sharma [at] srmap.edu <span class="demo-badge badge-teacher">Teacher · max123</span>
+          </button>
+          <button class="demo-btn" data-email="charles_leclerc" data-domain="srmap.edu" data-pass="123" onclick="fillDemoFromAttr(this)">
+            charles_leclerc [at] srmap.edu <span class="demo-badge badge-student">Student · 123</span>
+          </button>
+        </div>
+      </div>
+
+    
+      <div id="register-section" class="form-section">
+        <div class="auth-title">Create Account</div>
+        <div class="auth-sub">Join EduTrack today</div>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Arjun Kumar"></div>
+          <div class="form-group"><label>Role</label>
+            <select id="reg-role">
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="you@institution.edu"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="reg-password" placeholder="Create password"></div>
+        <div class="form-group"><label>Department</label>
+          <select id="reg-dept">
+            <option value="CSE">Computer Science</option>
+            <option value="ECE">Electronics</option>
+            <option value="ME">Mechanical</option>
+            <option value="CIVIL">Civil</option>
+          </select>
+        </div>
+        <div class="form-group" id="student-fields">
+          <label>Career Goal</label>
+          <input type="text" id="reg-goal" placeholder="e.g. data science, software engineer">
+        </div>
+        <div class="form-group">
+          <label>Interests (comma-separated)</label>
+          <input type="text" id="reg-interests" placeholder="e.g. coding, design, math">
+        </div>
+        <button class="btn-primary" onclick="doRegister()">Create Account →</button>
+        <div class="error-msg" id="register-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false">
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-section').classList.toggle('active', tab==='login');
+  document.getElementById('register-section').classList.toggle('active', tab==='register');
+}
+
+function fillDemoFromAttr(btn) {
+  const email = btn.getAttribute('data-email') + '@' + btn.getAttribute('data-domain');
+  const pass = btn.getAttribute('data-pass');
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-password').value = pass;
+}
+
+function fillDemo(email, pass) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-password').value = pass;
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) return showError('login-error', 'Please fill all fields');
+  const btn = document.querySelector('#login-section .btn-primary');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const res = await fetch('/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password})
+    });
+    const data = await res.json();
+    if (data.success) {
+      window.location.href = '/dashboard';
+    } else {
+      showError('login-error', data.message || 'Login failed');
+      btn.textContent = 'Sign In →'; btn.disabled = false;
+    }
+  } catch(e) {
+    showError('login-error', 'Server error. Try again.');
+    btn.textContent = 'Sign In →'; btn.disabled = false;
+  }
+}
+
+async function doRegister() {
+  const data = {
+    name: document.getElementById('reg-name').value,
+    email: document.getElementById('reg-email').value,
+    password: document.getElementById('reg-password').value,
+    role: document.getElementById('reg-role').value,
+    department: document.getElementById('reg-dept').value,
+    career_goal: document.getElementById('reg-goal').value,
+    interests: document.getElementById('reg-interests').value,
+  };
+  if (!data.name || !data.email || !data.password) return showError('register-error','Fill required fields');
+  const res = await fetch('/register', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify(data)
+});
+
+const result = await res.json();
+
+if (result.success) {
+  alert('Registered successfully!');
+  switchTab('login');
+} else {
+  showError('register-error', result.message || 'Registration failed');
+}
+}
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
